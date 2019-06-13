@@ -1,0 +1,23 @@
+plugins {
+    id 'scala'
+    id 'application'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'org.scala-lang:scala-library:2.12.8'
+    implementation 'org.scala-lang:scala-reflect:2.12.8'
+
+    implementation 'com.github.samtools:htsjdk:2.19.0'
+    implementation 'com.github.scopt:scopt_2.12:4.0.0-RC2'
+    implementation 'org.apache.logging.log4j:log4j-api-scala_2.12:11.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.8.2'
+    implementation 'org.biojava:biojava-genome:5.2.1'
+}
+
+application {
+    mainClassName = 'RiboScala'
+}
