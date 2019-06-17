@@ -37,8 +37,6 @@ object RiboScala extends App with Logging {
     case Some(config) =>
       val fs = FileSystems.getDefault
 
-      println(config.geneFile)
-
       val genes = GFF3Reader.read(config.geneFile.getAbsolutePath)
       val samFile = fs.getPath(config.samFile.getAbsolutePath)
       val coverageFile = fs.getPath(config.coverageFile.getAbsolutePath)
@@ -47,6 +45,7 @@ object RiboScala extends App with Logging {
       val metagene = MetageneProfile(samFile, genes)
 
       logger.info(Vector("Read length", "Read count", "Read %\t", "Periodicity", "Offset").mkString("\t"))
+      metagene.saveCSV(fs.getPath("metagene.csv"))
       metagene.readLengths.foreach { readLen =>
         logger.info(
           Vector(

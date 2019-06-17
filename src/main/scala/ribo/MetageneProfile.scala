@@ -1,6 +1,6 @@
 package ribo
 
-import java.nio.file.Path
+import java.nio.file.{Files, Path}
 
 import htsjdk.samtools.{QueryInterval, SamReaderFactory}
 import org.biojava.nbio.genome.parsers.gff.{FeatureI, FeatureList}
@@ -60,6 +60,32 @@ class MetageneProfile(val profile: Map[(Int, Int), Int]) {
         .map { case (frame, frameReads) => frame -> frameReads.values.sum }
       readLen -> framePlot(bestOffset % 3).toFloat / readCount(readLen).toFloat
     }
+
+  /**
+    * Create a CSV file containing metagene plots.
+    * Each line starts with a read length, then lists coverages on subsequent offsets (starting at 1).
+    * @param outFile     target file path
+    * @param writeHeader insert a header row with 'read_length' and offset values as column names
+    */
+  def saveCSV(outFile: Path, writeHeader: Boolean = true): Unit = {
+    val csv = Files.newBufferedWriter(outFile)
+    if (writeHeader)
+      csv.write(
+        (Vector("read_length") ++
+          (1 until readLengths.max).map(_.toString))
+        .mkString(",") ++ "\n"
+      )
+    readLengths.foreach { readLen =>
+      csv.write(
+        (Vector(readLen) ++
+          (1 until readLengths.max)
+            .map(offsetPlot(readLen).withDefaultValue(0)(_)))
+          .map(_.toString)
+          .mkString(",") ++ "\n"
+      )
+    }
+    csv.close()
+  }
 }
 
 object MetageneProfile {
